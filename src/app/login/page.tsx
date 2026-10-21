@@ -124,7 +124,7 @@ export default function LoginPage() {
           </h1>
 
           <p className="mt-2 text-sm text-slate-500">
-            Class 9 — Sindh Board Physics
+            Class 9 — Mirpurkhas Board Physics
           </p>
         </div>
 

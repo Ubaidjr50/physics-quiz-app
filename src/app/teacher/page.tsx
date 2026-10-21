@@ -159,43 +159,73 @@ export default function TeacherPage() {
             </button>
 
             {/* Manage Students */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5">
-              <span className="text-3xl">👨‍🎓</span>
+            <button
+  type="button"
+  onClick={() => router.push("/teacher/students")}
+  className="rounded-xl border border-green-200 bg-green-50 p-5 text-left transition hover:bg-green-100"
+>
+  <span className="text-3xl">👨‍🎓</span>
 
-              <h3 className="mt-3 font-bold text-slate-900">
-                Manage Students
-              </h3>
+  <h3 className="mt-3 font-bold text-green-900">
+    Manage Students
+  </h3>
 
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Student management will be added in the next stage.
-              </p>
-            </div>
+  <p className="mt-2 text-sm leading-6 text-green-800">
+    View registered students and their roll numbers.
+  </p>
+
+  <span className="mt-4 inline-block rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white">
+    View Students →
+  </span>
+</button>
 
             {/* Physics Chapters */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5">
-              <span className="text-3xl">📚</span>
+            
+{/* Physics Chapters */}
+<button
+  type="button"
+  onClick={() => router.push("/teacher/chapters")}
+  className="rounded-xl border border-orange-200 bg-orange-50 p-5 text-left transition hover:border-orange-400 hover:bg-orange-100"
+>
+  <span className="text-3xl">📚</span>
 
-              <h3 className="mt-3 font-bold text-slate-900">
-                Physics Chapters
-              </h3>
+  <h3 className="mt-3 font-bold text-orange-900">
+    Physics Chapters
+  </h3>
 
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                View and manage Physics chapters in a future update.
-              </p>
-            </div>
+  <p className="mt-2 text-sm leading-6 text-orange-800">
+    View and manage Class 9 Physics chapters.
+  </p>
+
+  <span className="mt-4 inline-block rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
+    Manage Chapters →
+  </span>
+</button>
+
 
             {/* Live Attendance */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5">
-              <span className="text-3xl">🟢</span>
+            
+{/* Live Attendance */}
+<button
+  type="button"
+  onClick={() => router.push("/teacher/attendance")}
+  className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-left transition hover:border-emerald-400 hover:bg-emerald-100"
+>
+  <span className="text-3xl">🟢</span>
 
-              <h3 className="mt-3 font-bold text-slate-900">
-                Live Attendance
-              </h3>
+  <h3 className="mt-3 font-bold text-emerald-900">
+    Live Attendance
+  </h3>
 
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Quiz attendance tracking will be added in the next stage.
-              </p>
-            </div>
+  <p className="mt-2 text-sm leading-6 text-emerald-800">
+    View student attendance records, quiz names, and attendance times.
+  </p>
+
+  <span className="mt-4 inline-block rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">
+    View Attendance →
+  </span>
+</button>
+
 
             {/* Check Answers */}
             <button

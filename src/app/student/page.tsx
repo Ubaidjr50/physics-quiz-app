@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -29,8 +30,13 @@ export default function StudentPage() {
 
   const [name, setName] = useState("");
   const [rollNumber, setRollNumber] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [results, setResults] = useState<QuizResult[]>([]);
+  const [attendanceIds, setAttendanceIds] = useState<string[]>([]);
+  const [markingQuizId, setMarkingQuizId] = useState("");
+  const [attendanceMessage, setAttendanceMessage] = useState("");
+  const [attendanceError, setAttendanceError] = useState(false);
   const [message, setMessage] = useState("Loading your dashboard...");
   const [resultError, setResultError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -74,6 +80,7 @@ export default function StudentPage() {
         return;
       }
 
+      setStudentId(user.id);
       setName(profile.full_name || "Student");
       setRollNumber(profile.roll_number || "Not assigned");
 
@@ -93,7 +100,31 @@ export default function StudentPage() {
 
       setQuizzes((quizData || []) as Quiz[]);
 
-      // Fetch this student's submitted quiz statuses and published results.
+      // Load this student's existing attendance records.
+      const { data: attendanceData, error: attendanceLoadError } =
+        await supabase
+          .from("attendance")
+          .select("quiz_id")
+          .eq("student_id", user.id);
+
+      if (!active) return;
+
+      if (attendanceLoadError) {
+        console.error(
+          "Could not load attendance:",
+          attendanceLoadError
+        );
+        setAttendanceError(true);
+        setAttendanceMessage(
+          "Attendance status could not be loaded. Please refresh the page."
+        );
+      } else {
+        setAttendanceIds(
+          (attendanceData || []).map((record) => record.quiz_id)
+        );
+      }
+
+      // Load this student's quiz results.
       const { data: resultData, error: resultsRpcError } =
         await supabase.rpc("student_get_my_quiz_results");
 
@@ -119,6 +150,50 @@ export default function StudentPage() {
     };
   }, [router]);
 
+  async function markAttendance(quizId: string) {
+    if (!studentId || markingQuizId) return;
+
+    if (attendanceIds.includes(quizId)) {
+      setAttendanceMessage("Attendance is already marked for this quiz.");
+      setAttendanceError(false);
+      return;
+    }
+
+    setMarkingQuizId(quizId);
+    setAttendanceMessage("");
+    setAttendanceError(false);
+
+    const supabase = createClient();
+
+    const { error } = await supabase.from("attendance").insert({
+      student_id: studentId,
+      quiz_id: quizId,
+    });
+
+    if (error) {
+      console.error("Attendance error:", error);
+
+      if (error.code === "23505") {
+        setAttendanceIds((previous) =>
+          previous.includes(quizId) ? previous : [...previous, quizId]
+        );
+        setAttendanceMessage("Your attendance is already marked.");
+        setAttendanceError(false);
+      } else {
+        setAttendanceMessage(
+          `Attendance could not be marked: ${error.message}`
+        );
+        setAttendanceError(true);
+      }
+    } else {
+      setAttendanceIds((previous) => [...previous, quizId]);
+      setAttendanceMessage("Attendance marked successfully!");
+      setAttendanceError(false);
+    }
+
+    setMarkingQuizId("");
+  }
+
   async function logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -126,7 +201,6 @@ export default function StudentPage() {
     router.refresh();
   }
 
-  // A submitted quiz must not be started again.
   const submittedQuizIds = new Set(
     results.map((result) => result.quiz_id)
   );
@@ -142,7 +216,6 @@ export default function StudentPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-5 sm:p-10">
       <div className="mx-auto max-w-5xl">
-        {/* Student Header */}
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-blue-600">
@@ -171,7 +244,39 @@ export default function StudentPage() {
           </button>
         </header>
 
-        {/* My Results Section */}
+        {/* Attendance Summary */}
+        <section className="mt-8 rounded-2xl border border-green-100 bg-white p-6 shadow-sm">
+          <p className="text-sm font-semibold text-green-700">
+            YOUR ATTENDANCE
+          </p>
+
+          <h2 className="mt-2 text-2xl font-bold text-slate-900">
+            Quiz Attendance
+          </h2>
+
+          <p className="mt-2 text-slate-600">
+            Mark your attendance using the button on a published quiz below.
+          </p>
+
+          <p className="mt-4 text-lg font-semibold text-green-700">
+            {attendanceIds.length} quiz attendance
+            {attendanceIds.length === 1 ? "" : "s"} marked
+          </p>
+
+          {attendanceMessage && (
+            <p
+              className={`mt-4 rounded-xl p-4 text-sm ${
+                attendanceError
+                  ? "bg-red-50 text-red-700"
+                  : "bg-green-50 text-green-800"
+              }`}
+            >
+              {attendanceMessage}
+            </p>
+          )}
+        </section>
+
+        {/* My Results */}
         <section className="mt-8 rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
           <div>
             <p className="text-sm font-semibold text-emerald-700">
@@ -265,7 +370,7 @@ export default function StudentPage() {
           )}
         </section>
 
-        {/* Quiz Section */}
+        {/* Published Quizzes and Attendance */}
         <section className="mt-8 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
@@ -273,7 +378,7 @@ export default function StudentPage() {
             </h2>
 
             <p className="mt-2 text-slate-600">
-              Yahan teacher ke publish kiye hue quizzes nazar aayenge.
+              Published quizzes ki attendance yahan mark kar sakte ho.
             </p>
           </div>
 
@@ -302,6 +407,8 @@ export default function StudentPage() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {quizzes.map((quiz) => {
                 const alreadySubmitted = submittedQuizIds.has(quiz.id);
+                const attendanceMarked = attendanceIds.includes(quiz.id);
+                const isMarking = markingQuizId === quiz.id;
 
                 return (
                   <article
@@ -313,12 +420,12 @@ export default function StudentPage() {
 
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          alreadySubmitted
-                            ? "bg-slate-100 text-slate-700"
-                            : "bg-green-100 text-green-800"
+                          attendanceMarked
+                            ? "bg-green-100 text-green-800"
+                            : "bg-blue-100 text-blue-800"
                         }`}
                       >
-                        {alreadySubmitted ? "Submitted" : "Published"}
+                        {attendanceMarked ? "Present ✓" : "Attendance Pending"}
                       </span>
                     </div>
 
@@ -330,18 +437,39 @@ export default function StudentPage() {
                       Duration: {quiz.duration_minutes} minutes
                     </p>
 
+                    <button
+                      type="button"
+                      onClick={() => markAttendance(quiz.id)}
+                      disabled={
+                        attendanceMarked ||
+                        Boolean(markingQuizId) ||
+                        attendanceError
+                      }
+                      className={`mt-5 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition ${
+                        attendanceMarked
+                          ? "cursor-not-allowed bg-green-100 text-green-800"
+                          : "bg-green-600 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                      }`}
+                    >
+                      {attendanceMarked
+                        ? "Attendance Marked ✓"
+                        : isMarking
+                          ? "Marking Attendance..."
+                          : "Mark Attendance"}
+                    </button>
+
                     {alreadySubmitted ? (
                       <button
                         type="button"
                         disabled
-                        className="mt-5 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 font-semibold text-slate-500"
+                        className="mt-3 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 font-semibold text-slate-500"
                       >
                         Quiz Already Submitted ✓
                       </button>
                     ) : (
                       <Link
                         href={`/student/quiz/${quiz.id}`}
-                        className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
+                        className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
                       >
                         Start Quiz →
                       </Link>
