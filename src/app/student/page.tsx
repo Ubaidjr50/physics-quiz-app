@@ -100,7 +100,6 @@ export default function StudentPage() {
 
       setQuizzes((quizData || []) as Quiz[]);
 
-      // Load this student's existing attendance records.
       const { data: attendanceData, error: attendanceLoadError } =
         await supabase
           .from("attendance")
@@ -124,7 +123,6 @@ export default function StudentPage() {
         );
       }
 
-      // Load this student's quiz results.
       const { data: resultData, error: resultsRpcError } =
         await supabase.rpc("student_get_my_quiz_results");
 
@@ -143,7 +141,7 @@ export default function StudentPage() {
       setLoading(false);
     }
 
-    loadDashboard();
+    void loadDashboard();
 
     return () => {
       active = false;
@@ -205,70 +203,166 @@ export default function StudentPage() {
     results.map((result) => result.quiz_id)
   );
 
+  const pageBackground = {
+    background:
+      "linear-gradient(135deg, #eef2ff 0%, #e0e7ff 45%, #f3e8ff 100%)",
+    minHeight: "100vh",
+  } as const;
+
+  const sectionClass =
+    "mt-7 rounded-3xl border border-white/80 bg-white/80 p-5 shadow-lg backdrop-blur-xl sm:p-7";
+
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-        <p className="text-slate-600">{message}</p>
+      <main
+        style={pageBackground}
+        className="flex items-center justify-center p-6"
+      >
+        <div className="rounded-2xl border border-white bg-white/80 p-6 shadow-xl">
+          <div className="flex items-center gap-3">
+            <span className="h-3 w-3 animate-pulse rounded-full bg-indigo-600" />
+            <p className="font-semibold text-indigo-900">
+              {message}
+            </p>
+          </div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-5 sm:p-10">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex flex-wrap items-center justify-between gap-4">
+    <main style={pageBackground} className="p-4 sm:p-8 lg:p-10">
+      <div className="mx-auto max-w-7xl">
+
+        {/* Gradient Header */}
+        <header className="flex flex-wrap items-center justify-between gap-5 rounded-3xl bg-gradient-to-r from-indigo-700 via-violet-700 to-purple-600 p-6 text-white shadow-xl sm:p-8">
           <div>
-            <p className="text-sm font-semibold text-blue-600">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-widest text-indigo-50">
+              <span>✦</span>
+              PHYSICS QUIZ SYSTEM
+            </div>
+
+            <p className="text-sm font-semibold tracking-wider text-indigo-100">
               STUDENT WORKSPACE
             </p>
 
-            <h1 className="mt-2 text-3xl font-bold text-slate-900">
-              Assalam-o-Alaikum, {name}
+            <h1 className="mt-2 text-2xl font-extrabold sm:text-4xl">
+              Assalam-o-Alaikum, {name}!
             </h1>
 
-            <p className="mt-2 text-slate-500">
-              Class 9 Physics · Sindh Board
+            <p className="mt-3 text-sm text-indigo-100 sm:text-base">
+              Class 9 Physics · Mirpurkhas Board
             </p>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white">
+              <span>🎓</span>
               Roll Number: {rollNumber}
-            </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={logout}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold hover:bg-slate-100"
+            className="rounded-xl border border-white/30 bg-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
           >
-            Sign Out
+            Sign Out ↗
           </button>
         </header>
 
-        {/* Attendance Summary */}
-        <section className="mt-8 rounded-2xl border border-green-100 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold text-green-700">
-            YOUR ATTENDANCE
-          </p>
+        {/* Welcome and Overview */}
+        <section className={sectionClass}>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wider text-indigo-600">
+                Your learning space
+              </p>
 
-          <h2 className="mt-2 text-2xl font-bold text-slate-900">
-            Quiz Attendance
-          </h2>
+              <h2 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                Student Dashboard
+              </h2>
 
-          <p className="mt-2 text-slate-600">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                Take your Physics quizzes, mark attendance and track
+                your published results from one place.
+              </p>
+            </div>
+
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-200 text-4xl">
+              🎓
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-4">
+              <p className="text-sm font-semibold text-indigo-700">
+                Published Quizzes
+              </p>
+              <p className="mt-2 text-3xl font-extrabold text-indigo-900">
+                {quizzes.length}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Available to attempt
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-4">
+              <p className="text-sm font-semibold text-violet-700">
+                Attendance
+              </p>
+              <p className="mt-2 text-3xl font-extrabold text-violet-900">
+                {attendanceIds.length}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Quiz attendances marked
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4">
+              <p className="text-sm font-semibold text-purple-700">
+                Submitted Quizzes
+              </p>
+              <p className="mt-2 text-3xl font-extrabold text-purple-900">
+                {submittedQuizIds.size}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Based on available results
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Attendance */}
+        <section className={sectionClass}>
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-green-200 text-2xl">
+              ✓
+            </div>
+            <div>
+              <p className="text-xs font-bold tracking-wider text-emerald-700">
+                YOUR ATTENDANCE
+              </p>
+              <h2 className="mt-1 text-xl font-extrabold text-slate-900 sm:text-2xl">
+                Quiz Attendance
+              </h2>
+            </div>
+          </div>
+
+          <p className="mt-4 leading-6 text-slate-600">
             Mark your attendance using the button on a published quiz below.
           </p>
 
-          <p className="mt-4 text-lg font-semibold text-green-700">
+          <p className="mt-4 inline-flex rounded-xl bg-emerald-50 px-4 py-3 font-bold text-emerald-800">
             {attendanceIds.length} quiz attendance
             {attendanceIds.length === 1 ? "" : "s"} marked
           </p>
 
           {attendanceMessage && (
             <p
+              role="status"
               className={`mt-4 rounded-xl p-4 text-sm ${
                 attendanceError
                   ? "bg-red-50 text-red-700"
-                  : "bg-green-50 text-green-800"
+                  : "bg-emerald-50 text-emerald-800"
               }`}
             >
               {attendanceMessage}
@@ -276,22 +370,26 @@ export default function StudentPage() {
           )}
         </section>
 
-        {/* My Results */}
-        <section className="mt-8 rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-          <div>
-            <p className="text-sm font-semibold text-emerald-700">
-              YOUR PERFORMANCE
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold text-slate-900">
-              My Results
-            </h2>
-
-            <p className="mt-2 text-slate-600">
-              Yahan tumhare submitted quizzes ke results nazar aayenge.
-              Marks sirf teacher ke publish karne ke baad show honge.
-            </p>
+        {/* Results */}
+        <section className={sectionClass}>
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-purple-200 text-2xl">
+              🏆
+            </div>
+            <div>
+              <p className="text-xs font-bold tracking-wider text-violet-700">
+                YOUR PERFORMANCE
+              </p>
+              <h2 className="mt-1 text-xl font-extrabold text-slate-900 sm:text-2xl">
+                My Results
+              </h2>
+            </div>
           </div>
+
+          <p className="mt-4 leading-6 text-slate-600">
+            Your quiz results will appear here.
+Marks will be shown only after the teacher publishes them..
+          </p>
 
           {resultError && (
             <p className="mt-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
@@ -300,16 +398,15 @@ export default function StudentPage() {
           )}
 
           {!resultError && results.length === 0 && (
-            <div className="mt-6 rounded-xl border border-dashed border-slate-300 p-6 text-center">
+            <div className="mt-6 rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-7 text-center">
               <span className="text-4xl">📊</span>
-
               <h3 className="mt-3 font-bold text-slate-800">
                 No Submitted Quizzes Yet
               </h3>
-
-              <p className="mt-2 text-sm text-slate-500">
-                Quiz submit karne aur teacher ke result publish karne ke
-                baad tumhara result yahan nazar aayega.
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Submit the quiz; once the teacher publishes the results,
+                your result will appear like this.
+.
               </p>
             </div>
           )}
@@ -319,13 +416,13 @@ export default function StudentPage() {
               {results.map((result) => (
                 <article
                   key={result.quiz_id}
-                  className="rounded-xl border border-slate-200 p-5"
+                  className="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-3xl">📋</span>
 
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      className={`rounded-full px-3 py-1 text-xs font-bold ${
                         result.published
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-amber-100 text-amber-800"
@@ -337,29 +434,27 @@ export default function StudentPage() {
                     </span>
                   </div>
 
-                  <h3 className="mt-4 text-xl font-bold text-slate-900">
+                  <h3 className="mt-4 text-xl font-extrabold text-slate-900">
                     {result.quiz_title}
                   </h3>
 
                   {result.published ? (
                     <>
-                      <p className="mt-3 text-2xl font-bold text-emerald-700">
+                      <p className="mt-4 text-3xl font-extrabold text-emerald-700">
                         {result.marks_awarded ?? 0} / {result.total_marks ?? 0}
                       </p>
-
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-2 text-sm font-semibold text-slate-600">
                         Percentage: {result.percentage ?? 0}%
                       </p>
                     </>
                   ) : (
-                    <p className="mt-3 text-sm text-slate-600">
-                      Tumhara quiz submit ho gaya hai. Teacher ke result
-                      publish karne ka intezar karo.
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                     Your quiz has been submitted. Wait for the teacher to publish the results..
                     </p>
                   )}
 
                   {result.submitted_at && (
-                    <p className="mt-3 text-xs text-slate-400">
+                    <p className="mt-4 text-xs text-slate-400">
                       Submitted:{" "}
                       {new Date(result.submitted_at).toLocaleString()}
                     </p>
@@ -370,16 +465,25 @@ export default function StudentPage() {
           )}
         </section>
 
-        {/* Published Quizzes and Attendance */}
-        <section className="mt-8 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              My Physics Quizzes
-            </h2>
+        {/* Published Quizzes */}
+        <section className={sectionClass}>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold tracking-wider text-indigo-600">
+                TEST YOUR KNOWLEDGE
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold text-slate-900">
+                My Physics Quizzes
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Published quizzes open karo, attendance mark karo aur
+                apna quiz attempt karo.
+              </p>
+            </div>
 
-            <p className="mt-2 text-slate-600">
-              Published quizzes ki attendance yahan mark kar sakte ho.
-            </p>
+            <div className="rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 p-4 text-3xl">
+              📚
+            </div>
           </div>
 
           {message && (
@@ -389,14 +493,12 @@ export default function StudentPage() {
           )}
 
           {!message && quizzes.length === 0 && (
-            <div className="mt-6 rounded-xl border border-dashed border-slate-300 p-8 text-center">
+            <div className="mt-6 rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-8 text-center">
               <span className="text-4xl">📚</span>
-
               <h3 className="mt-3 font-bold text-slate-800">
                 No Published Quizzes Yet
               </h3>
-
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm leading-6 text-slate-600">
                 Your teacher has not published a quiz yet. Please check again
                 later.
               </p>
@@ -404,7 +506,7 @@ export default function StudentPage() {
           )}
 
           {!message && quizzes.length > 0 && (
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {quizzes.map((quiz) => {
                 const alreadySubmitted = submittedQuizIds.has(quiz.id);
                 const attendanceMarked = attendanceIds.includes(quiz.id);
@@ -413,28 +515,32 @@ export default function StudentPage() {
                 return (
                   <article
                     key={quiz.id}
-                    className="rounded-xl border border-slate-200 p-5 transition hover:border-blue-300 hover:shadow-sm"
+                    className="flex flex-col rounded-2xl border border-indigo-100 bg-white p-5 shadow-md transition duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <span className="text-3xl">📝</span>
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 text-2xl">
+                        📝
+                      </span>
 
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        className={`rounded-full px-3 py-1 text-center text-xs font-bold ${
                           attendanceMarked
-                            ? "bg-green-100 text-green-800"
-                            : "bg-blue-100 text-blue-800"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-indigo-100 text-indigo-800"
                         }`}
                       >
-                        {attendanceMarked ? "Present ✓" : "Attendance Pending"}
+                        {attendanceMarked
+                          ? "Present ✓"
+                          : "Attendance Pending"}
                       </span>
                     </div>
 
-                    <h3 className="mt-4 text-xl font-bold text-slate-900">
+                    <h3 className="mt-5 text-lg font-extrabold text-slate-900">
                       {quiz.title}
                     </h3>
 
                     <p className="mt-2 text-sm text-slate-500">
-                      Duration: {quiz.duration_minutes} minutes
+                      ⏱ Duration: {quiz.duration_minutes} minutes
                     </p>
 
                     <button
@@ -445,10 +551,10 @@ export default function StudentPage() {
                         Boolean(markingQuizId) ||
                         attendanceError
                       }
-                      className={`mt-5 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold transition ${
+                      className={`mt-5 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 font-bold transition ${
                         attendanceMarked
-                          ? "cursor-not-allowed bg-green-100 text-green-800"
-                          : "bg-green-600 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                          ? "cursor-not-allowed bg-emerald-100 text-emerald-800"
+                          : "bg-emerald-600 text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                       }`}
                     >
                       {attendanceMarked
@@ -462,14 +568,14 @@ export default function StudentPage() {
                       <button
                         type="button"
                         disabled
-                        className="mt-3 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 font-semibold text-slate-500"
+                        className="mt-3 inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-slate-100 px-4 py-3 font-bold text-slate-500"
                       >
                         Quiz Already Submitted ✓
                       </button>
                     ) : (
                       <Link
                         href={`/student/quiz/${quiz.id}`}
-                        className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
+                        className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 font-bold text-white shadow-sm transition hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       >
                         Start Quiz →
                       </Link>
@@ -480,6 +586,14 @@ export default function StudentPage() {
             </div>
           )}
         </section>
+
+        {/* Footer */}
+        <footer className="mt-8 rounded-2xl border border-white/80 bg-white/60 px-5 py-4 text-center text-sm text-slate-600">
+          <span className="font-bold text-indigo-700">
+            Physics Quiz System
+          </span>
+          {" "}· Student Workspace
+        </footer>
       </div>
     </main>
   );

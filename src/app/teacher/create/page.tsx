@@ -293,7 +293,7 @@ export default function CreateQuizPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
           <p className="text-sm font-bold tracking-wide text-blue-600">
-            CLASS 9 · SINDH BOARD
+            CLASS 9 · Mirpurkhas BOARD
           </p>
 
           <h1 className="mt-2 text-3xl font-bold text-slate-900">

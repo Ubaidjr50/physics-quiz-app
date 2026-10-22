@@ -64,214 +64,231 @@ export default function TeacherPage() {
     router.refresh();
   }
 
+  const pageBackground = {
+    background:
+      "linear-gradient(135deg, #eef2ff 0%, #e0e7ff 45%, #f3e8ff 100%)",
+    minHeight: "100vh",
+  } as const;
+
+  const cards = [
+    {
+      icon: "✚",
+      title: "Create Quiz",
+      description:
+        "Create Physics quizzes, add MCQs and save your work as a draft.",
+      button: "Create Quiz",
+      href: "/teacher/create",
+      color: "#4f46e5",
+      background: "linear-gradient(135deg, #eef2ff, #e0e7ff)",
+    },
+    {
+      icon: "📋",
+      title: "Manage My Quizzes",
+      description:
+        "View saved quizzes, check their status and publish drafts.",
+      button: "Manage Quizzes",
+      href: "/teacher/quizzes",
+      color: "#7c3aed",
+      background: "linear-gradient(135deg, #f3e8ff, #ede9fe)",
+    },
+    {
+      icon: "🎓",
+      title: "Manage Students",
+      description:
+        "View registered students and their roll numbers.",
+      button: "View Students",
+      href: "/teacher/students",
+      color: "#0369a1",
+      background: "linear-gradient(135deg, #e0f2fe, #dbeafe)",
+    },
+    {
+      icon: "📚",
+      title: "Physics Chapters",
+      description:
+        "Explore and manage Class 9 Physics chapters.",
+      button: "Manage Chapters",
+      href: "/teacher/chapters",
+      color: "#c2410c",
+      background: "linear-gradient(135deg, #ffedd5, #fef3c7)",
+    },
+    {
+      icon: "🟢",
+      title: "Live Attendance",
+      description:
+        "Review student attendance, quiz names and attendance times.",
+      button: "View Attendance",
+      href: "/teacher/attendance",
+      color: "#047857",
+      background: "linear-gradient(135deg, #d1fae5, #ccfbf1)",
+    },
+    {
+      icon: "📝",
+      title: "Check Answers",
+      description:
+        "Review submitted quizzes and student marks.",
+      button: "Check Results",
+      href: "/teacher/results",
+      color: "#6d28d9",
+      background: "linear-gradient(135deg, #ede9fe, #f3e8ff)",
+    },
+    {
+      icon: "🏆",
+      title: "Publish Results",
+      description:
+        "Open the results workspace to manage result publication.",
+      button: "View Results",
+      href: "/teacher/results",
+      color: "#b45309",
+      background: "linear-gradient(135deg, #fef3c7, #ffedd5)",
+    },
+  ];
+
   if (!ready) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-        <p className="text-slate-600">{message || "Loading..."}</p>
+      <main
+        style={{
+          ...pageBackground,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "24px",
+        }}
+      >
+        <div className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-lg">
+          <p className="font-semibold text-indigo-900">
+            {message || "Loading..."}
+          </p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-5 sm:p-10">
-      <div className="mx-auto max-w-5xl">
+    <main style={pageBackground} className="min-h-screen p-4 sm:p-8 lg:p-10">
+      <div className="mx-auto max-w-7xl">
+
         {/* Header */}
-        <header className="flex flex-wrap items-center justify-between gap-4">
+        <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-gradient-to-r from-indigo-700 via-violet-700 to-purple-600 p-6 text-white shadow-xl sm:p-8">
           <div>
-            <p className="text-sm font-semibold text-blue-600">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-widest text-indigo-50">
+              <span>✦</span>
+              PHYSICS QUIZ SYSTEM
+            </div>
+
+            <p className="text-sm font-medium text-indigo-100">
               TEACHER WORKSPACE
             </p>
 
-            <h1 className="mt-2 text-3xl font-bold text-slate-900">
-              Assalam-o-Alaikum, {name}
+            <h1 className="mt-2 text-2xl font-extrabold sm:text-4xl">
+              Assalam-o-Alaikum, {name}!
             </h1>
 
-            <p className="mt-2 text-slate-500">
+            <p className="mt-3 text-sm text-indigo-100 sm:text-base">
               Class 9 Physics · Mirpurkhas Board
+            </p>
+            <p className="mt-1 text-sm text-indigo-200">
+              Your classroom, quizzes and results — all in one place.
             </p>
           </div>
 
           <button
             type="button"
             onClick={logout}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 font-semibold transition hover:bg-slate-100"
+            className="rounded-xl border border-white/30 bg-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
           >
-            Sign Out
+            Sign Out ↗
           </button>
         </header>
 
-        {/* Dashboard */}
-        <section className="mt-8 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">
-            Teacher Dashboard
-          </h2>
-
-          <p className="mt-3 leading-7 text-slate-600">
-            Welcome to your Physics Quiz System. Create quizzes, add MCQs,
-            manage your quizzes, and prepare results from your teacher
-            workspace.
-          </p>
-
-          {/* Dashboard Cards */}
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Create Quiz */}
-            <button
-              type="button"
-              onClick={() => router.push("/teacher/create")}
-              className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-left transition hover:border-blue-400 hover:bg-blue-100"
-            >
-              <span className="text-3xl">➕</span>
-
-              <h3 className="mt-3 font-bold text-blue-900">
-                Create Quiz
-              </h3>
-
-              <p className="mt-2 text-sm font-normal leading-6 text-blue-800">
-                Create a Physics quiz, add MCQs, set correct answers, and save
-                your quiz as a draft.
+        {/* Welcome panel */}
+        <section className="mt-7 rounded-3xl border border-white/80 bg-white/75 p-5 shadow-lg backdrop-blur-xl sm:p-7">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wider text-indigo-600">
+                Your workspace
               </p>
-
-              <span className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white">
-                Create Now →
-              </span>
-            </button>
-
-            {/* Manage My Quizzes */}
-            <button
-              type="button"
-              onClick={() => router.push("/teacher/quizzes")}
-              className="rounded-xl border border-indigo-200 bg-indigo-50 p-5 text-left transition hover:border-indigo-400 hover:bg-indigo-100"
-            >
-              <span className="text-3xl">📋</span>
-
-              <h3 className="mt-3 font-bold text-indigo-900">
-                Manage My Quizzes
-              </h3>
-
-              <p className="mt-2 text-sm font-normal leading-6 text-indigo-800">
-                View your saved quizzes, check their status, and publish draft
-                quizzes for students.
+              <h2 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                Teacher Dashboard
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                Manage your quizzes, students, Physics chapters, attendance
+                and results from your dashboard.
               </p>
+            </div>
 
-              <span className="mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white">
-                Manage Quizzes →
-              </span>
-            </button>
-
-            {/* Manage Students */}
-            <button
-  type="button"
-  onClick={() => router.push("/teacher/students")}
-  className="rounded-xl border border-green-200 bg-green-50 p-5 text-left transition hover:bg-green-100"
->
-  <span className="text-3xl">👨‍🎓</span>
-
-  <h3 className="mt-3 font-bold text-green-900">
-    Manage Students
-  </h3>
-
-  <p className="mt-2 text-sm leading-6 text-green-800">
-    View registered students and their roll numbers.
-  </p>
-
-  <span className="mt-4 inline-block rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white">
-    View Students →
-  </span>
-</button>
-
-            {/* Physics Chapters */}
-            
-{/* Physics Chapters */}
-<button
-  type="button"
-  onClick={() => router.push("/teacher/chapters")}
-  className="rounded-xl border border-orange-200 bg-orange-50 p-5 text-left transition hover:border-orange-400 hover:bg-orange-100"
->
-  <span className="text-3xl">📚</span>
-
-  <h3 className="mt-3 font-bold text-orange-900">
-    Physics Chapters
-  </h3>
-
-  <p className="mt-2 text-sm leading-6 text-orange-800">
-    View and manage Class 9 Physics chapters.
-  </p>
-
-  <span className="mt-4 inline-block rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
-    Manage Chapters →
-  </span>
-</button>
-
-
-            {/* Live Attendance */}
-            
-{/* Live Attendance */}
-<button
-  type="button"
-  onClick={() => router.push("/teacher/attendance")}
-  className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-left transition hover:border-emerald-400 hover:bg-emerald-100"
->
-  <span className="text-3xl">🟢</span>
-
-  <h3 className="mt-3 font-bold text-emerald-900">
-    Live Attendance
-  </h3>
-
-  <p className="mt-2 text-sm leading-6 text-emerald-800">
-    View student attendance records, quiz names, and attendance times.
-  </p>
-
-  <span className="mt-4 inline-block rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">
-    View Attendance →
-  </span>
-</button>
-
-
-            {/* Check Answers */}
-            <button
-              type="button"
-              onClick={() => router.push("/teacher/results")}
-              className="rounded-xl border border-purple-200 bg-purple-50 p-5 text-left transition hover:border-purple-400 hover:bg-purple-100"
-            >
-              <span className="text-3xl">📝</span>
-
-              <h3 className="mt-3 font-bold text-purple-900">
-                Check Answers
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-purple-800">
-                Open the results workspace to review submitted quizzes and
-                student marks.
-              </p>
-
-              <span className="mt-4 inline-block rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white">
-                Check Results →
-              </span>
-            </button>
-
-            {/* Publish Results */}
-            <button
-              type="button"
-              onClick={() => router.push("/teacher/results")}
-              className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-left transition hover:border-amber-400 hover:bg-amber-100"
-            >
-              <span className="text-3xl">🏆</span>
-
-              <h3 className="mt-3 font-bold text-amber-900">
-                Publish Results
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-amber-800">
-                Open the results workspace to view marks and manage result
-                publication.
-              </p>
-
-              <span className="mt-4 inline-block rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white">
-                View Results →
-              </span>
-            </button>
+            <div className="rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 p-4 text-4xl">
+              👨‍🏫
+            </div>
           </div>
         </section>
+
+        {/* Feature cards */}
+        <section className="mt-8">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-extrabold text-slate-900 sm:text-2xl">
+                Quick Access
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Select a section to get started.
+              </p>
+            </div>
+
+            <span className="rounded-full border border-indigo-200 bg-white/80 px-3 py-1.5 text-xs font-bold text-indigo-700">
+              7 WORKSPACE OPTIONS
+            </span>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {cards.map((card) => (
+              <button
+                key={card.title}
+                type="button"
+                onClick={() => router.push(card.href)}
+                className="group flex min-h-64 flex-col rounded-2xl border border-white/90 bg-white p-5 text-left shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:p-6"
+              >
+                <div className="flex w-full items-center justify-between gap-3">
+                  <span
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl"
+                    style={{ background: card.background }}
+                  >
+                    {card.icon}
+                  </span>
+
+                  <span
+                    className="text-xl transition-transform duration-300 group-hover:translate-x-1"
+                    style={{ color: card.color }}
+                  >
+                    →
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-lg font-extrabold text-slate-900">
+                  {card.title}
+                </h3>
+
+                <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">
+                  {card.description}
+                </p>
+
+                <span
+                  className="mt-5 inline-flex w-fit items-center rounded-xl px-4 py-2.5 text-sm font-bold text-white transition group-hover:brightness-110"
+                  style={{ backgroundColor: card.color }}
+                >
+                  {card.button} →
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-8 rounded-2xl border border-white/80 bg-white/60 px-5 py-4 text-center text-sm text-slate-600">
+          <span className="font-semibold text-indigo-700">
+            Physics Quiz System
+          </span>
+          {" "}· Teacher Workspace
+        </footer>
       </div>
     </main>
   );

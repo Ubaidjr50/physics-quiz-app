@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -88,12 +89,11 @@ export default function LoginPage() {
         return;
       }
 
-      if (profile.role === "teacher") {
-        router.replace("/teacher");
-        router.refresh();
-        return;
-      }
-
+     if (profile.role === "teacher") {
+  await supabase.auth.signOut();
+  setMessage("This is the Student Portal. Please use Teacher Login.");
+  return;
+}
       if (profile.role === "student") {
         router.replace("/student");
         router.refresh();
@@ -268,10 +268,21 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs leading-5 text-slate-500">
-          Student accounts use email and password. Teacher accounts must be
-          authorized by the system administrator.
-        </p>
+        <div className="mt-6 space-y-3 text-center">
+  <p className="text-xs leading-5 text-slate-500">
+    Student accounts use email and password.
+  </p>
+
+  <p className="text-sm text-slate-600">
+    Are you a teacher?{" "}
+    <Link
+      href="/teacher-login"
+      className="font-semibold text-blue-700 hover:underline"
+    >
+      Teacher Login
+    </Link>
+  </p>
+</div>
       </section>
     </main>
   );

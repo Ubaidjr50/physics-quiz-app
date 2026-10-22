@@ -1,9 +1,10 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #f5f7fb;
-  --foreground: #172033;
-  --primary: #2563eb;
+  --background: aliceblue;
+  --foreground: midnightblue;
+  --primary: royalblue;
 }
 
 * {
@@ -41,7 +42,35 @@ button {
   cursor: pointer;
 }
 
+/* Teacher dashboard */
+.teacher-background {
+  background: linear-gradient(to bottom right, aliceblue, lavender);
+}
+
+/* Student dashboard */
+.student-background {
+  background: linear-gradient(to bottom right, azure, lightcyan);
+}
+
+/* Results section */
+.results-background {
+  background: linear-gradient(to bottom right, lavender, ghostwhite);
+}
+
+/* Attendance section */
+.attendance-background {
+  background: linear-gradient(to bottom right, honeydew, mintcream);
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  background: white;
+  border: 1px solid lightsteelblue;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px lightgray;
+}
+
 ::selection {
-  background: #bfdbfe;
-  color: #1e3a8a;
+  background: lightblue;
+  color: midnightblue;
 }
